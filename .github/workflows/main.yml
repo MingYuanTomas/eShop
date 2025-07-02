@@ -1,0 +1,25 @@
+name: Sync eShop Fork
+on:
+  schedule:
+    - cron: '0 0 * * *'  # 每天 UTC 00:00 同步（可调整）
+  workflow_dispatch:     # 允许手动触发
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # 确保拉取完整历史记录
+
+      - name: Add upstream (original repo)
+        run: |
+          git remote add upstream https://github.com/dotnet/eShop.git
+          git fetch upstream
+
+      - name: Merge updates
+        run: |
+          git checkout main
+          git merge upstream/main
+          git push origin main
